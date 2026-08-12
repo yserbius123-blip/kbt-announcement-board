@@ -7,7 +7,9 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+		<script src="hebcal.min.js"></script>
 		<script>
+			const hebLookup = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','יא','יב','יג','יד','טו','טז','יז', 'יח','יט','כ', 'כא','כב','כג','כד','כה','כו','כז','כח','כט','ל'];
 			function checkTime(i) {
 				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
 				return i;
@@ -23,20 +25,26 @@
 				let Y = today.getFullYear();
 
 				const ampm = h >= 12 ? "PM" : "AM";
-
+				
 				h = h % 12;
 				if (h === 0) {
 					h = 12;
 				}
+
+				let hebdate = new hebcal.HDate(today)
+				let hebday = hebLookup[hebdate.getDate()];
+				let hebmonth = hebcal.Locale.gettext(hebdate.getMonthName(), "he");
+				let hebyear = hebdate.getFullYear();
+				console.debug(hebdate.render("he"))
 				m = checkTime(m);
 				document.getElementById('time').innerHTML =  h + ":" + m + '<span class="ampm">' + ampm + '</span>';
 				document.getElementById('en-date').innerHTML = M + " " + d + ", " + Y;
+				document.getElementById('he-date').innerHTML = hebday + "'" + " " + hebmonth + " " + hebyear;
 				setTimeout(startTime, 1000);
 			}
 			function init(){
 				startTime();
 		}
-
 		</script>
 	</head>
 	<body onload="init()">
@@ -50,7 +58,7 @@
 					onerror="this.onerror=null;this.src='logo-placeholder.svg';">
 				<div class="header-info">
 					<span id="shul" class="shul-name">קהילת בני תורה</span>
-					<div id="en-date" class="en-date">August 11th, 2026</div>
+					<div id="en-date" class="en-date"></div>
 					<div id="time" class="time"></div>
 					<div id="he-date" class="he-date">כ׳ סיון הת״שפו</div>
 				</div>
