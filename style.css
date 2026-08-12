@@ -1,0 +1,305 @@
+:root {
+	/* wood frame */
+	--walnut-mid: #3b2113;
+	--walnut-dark: #21100a;
+	--walnut-edge: #150a05;
+
+	/* brass */
+	--brass: #c9a446;
+	--brass-bright: #ecd48a;
+	--brass-deep: #a9822f;
+
+	/* parchment tablets */
+	--parchment-light: #faf1d9;
+	--parchment: #f0deb6;
+
+	/* ink */
+	--burgundy: #6b1420;
+	--ink: #2c1608;
+
+	--display-font: Georgia, 'Times New Roman', serif;
+	--hebrew-font: 'Frank Ruehl CLM', 'Frank Ruehl', 'David', 'Times New Roman', serif;
+	--body-font: 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: var(--body-font);
+	overflow: hidden;
+	background:
+		repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, transparent 1px, transparent 34px),
+		linear-gradient(160deg, var(--walnut-mid) 0%, var(--walnut-dark) 55%, var(--walnut-edge) 100%);
+}
+
+.board {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 1.6vh 2vw;
+	gap: 1.3vh;
+}
+
+/* ===================== HEADER ===================== */
+
+.north {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1.6vw;
+	border: 2px solid var(--brass);
+	border-radius: 6px;
+	box-shadow:
+		0 0 0 1px var(--walnut-edge) inset,
+		0 6px 16px rgba(0, 0, 0, 0.4);
+	background: linear-gradient(180deg, #2c1710 0%, #190d07 100%);
+	padding: 1.4vh 1.8vw;
+}
+
+.logo {
+	flex: 0 0 auto;
+	height: 15vh;
+	width: auto;
+	aspect-ratio: 941 / 428;
+	object-fit: contain;
+	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+}
+
+.header-info {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 0.7vh;
+	padding-left: 1.6vw;
+	border-left: 1px solid rgba(201, 164, 70, 0.4);
+}
+
+.shul-name {
+	font-family: var(--hebrew-font);
+	font-size: 2.6vw;
+	font-weight: 700;
+	color: var(--brass-bright);
+	letter-spacing: 0.01em;
+	line-height: 1;
+	white-space: nowrap;
+	text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.en-date,
+.time,
+.he-date {
+	color: var(--brass);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.en-date {
+	font-size: 1.3vw;
+}
+
+.he-date {
+	font-family: var(--hebrew-font);
+	font-size: 1.4vw;
+}
+
+.time {
+	font-size: 1.7vw;
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	color: var(--brass-bright);
+}
+
+.time .ampm {
+	font-size: 0.55em;
+	font-weight: 700;
+	margin-left: 0.25em;
+}
+
+/* ===================== COLUMNS ===================== */
+
+.columns {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	gap: 1.6vw;
+}
+
+.column {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 3px solid var(--brass);
+
+	/* rounded "Luchos" arch top, square base */
+	border-top-left-radius: 50% 14%;
+	border-top-right-radius: 50% 14%;
+
+	box-shadow:
+		0 0 0 1px var(--walnut-edge) inset,
+		0 10px 22px rgba(0, 0, 0, 0.38);
+
+	background:
+		radial-gradient(120% 55% at 50% 0%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 62%),
+		linear-gradient(180deg, var(--parchment-light) 0%, var(--parchment) 100%);
+}
+
+.column-header {
+	flex: 0 0 auto;
+	text-align: center;
+	font-family: var(--display-font);
+	font-weight: 700;
+	font-size: 1.5vw;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--parchment-light);
+	background: linear-gradient(180deg, #d8b968 0%, var(--brass) 55%, var(--brass-deep) 100%);
+	padding: 3.2vh 1vw 1.1vh;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.column-content {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4vh;
+	padding: 2vh 1.8vw;
+	color: var(--ink);
+}
+
+/* west / east schedules: slightly tighter rhythm than prose announcements */
+.schedule-list {
+	gap: 4.5vh;
+}
+
+/* ---- schedule rows (west / east columns) ---- */
+
+.schedule-row {
+	display: flex;
+	align-items: baseline;
+	font-size: 1.68vw;
+}
+
+.schedule-row .label {
+	min-width: 0;
+	font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.schedule-row .leader {
+	flex: 1 1 auto;
+	min-width: 1vw;
+	border-bottom: 3px dotted var(--brass-deep);
+	margin: 0 0.6vw;
+	transform: translateY(-0.35em);
+}
+
+.schedule-row .value {
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	color: var(--burgundy);
+	white-space: nowrap;
+}
+
+.schedule-row .value small {
+	font-size: 0.58em;
+	font-weight: 700;
+	margin-left: 0.15em;
+}
+
+/* ---- announcements (center column) ---- */
+
+.announcements {
+	gap: 2vh;
+}
+
+.announcement .eyebrow {
+	font-family: var(--display-font);
+	font-size: 1.2vw;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--burgundy);
+}
+
+.announcement p {
+	margin: 0.7vh 0 0;
+	font-size: 1.85vw;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+/* announcement variant: photo alongside the text, brass-framed like a
+   small portrait plaque. Add class="has-photo" to any .announcement
+   and drop an <img class="photo"> as its first child. Announcements
+   without a photo keep the plain text-only layout above. */
+.announcement.has-photo {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.2vw;
+}
+
+.announcement.has-photo .photo {
+	flex: 0 0 auto;
+	width: 16.4vw;
+	height: 16.4vw;
+	object-fit: cover;
+	border-radius: 10px;
+	border: 3px solid var(--brass);
+	box-shadow:
+		0 0 0 1px var(--walnut-edge),
+		0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.announcement.has-photo .text {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ornament {
+	position: relative;
+	height: 2px;
+	background: var(--brass-deep);
+	opacity: 0.7;
+	margin: 0 8%;
+}
+
+.ornament::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0.85vw;
+	height: 0.85vw;
+	background: var(--brass-deep);
+	border: 2px solid var(--parchment-light);
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.carousel-div{
+	display:contents;
+}
