@@ -9,14 +9,19 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
 		<script>
 			function checkTime(i) {
-			if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-			return i;
+				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+				return i;
 			}
 
 			function startTime() {
 				const today = new Date();
 				let h = today.getHours();
 				let m = today.getMinutes();
+
+				let d = today.getDate();
+				let M = today.toLocaleString('default', { month: 'long' });
+				let Y = today.getFullYear();
+
 				const ampm = h >= 12 ? "PM" : "AM";
 
 				h = h % 12;
@@ -25,11 +30,13 @@
 				}
 				m = checkTime(m);
 				document.getElementById('time').innerHTML =  h + ":" + m + '<span class="ampm">' + ampm + '</span>';
+				document.getElementById('en-date').innerHTML = M + " " + d + ", " + Y;
 				setTimeout(startTime, 1000);
 			}
 			function init(){
 				startTime();
 		}
+
 		</script>
 	</head>
 	<body onload="init()">
