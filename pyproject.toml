@@ -1,0 +1,39 @@
+[build-system]
+requires = [
+    "setuptools>=80",
+    "wheel"
+]
+
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shulboard"
+version = "0.1.0"
+description = "Bulletin board for shul"
+readme = "README.md"
+requires-python = ">=3.14"
+
+
+dependencies = [
+    "fastapi[standard]~=0.14",
+    "uvicorn[standard]~=0.5",
+    "pywin32==312",
+    "sqlmodel>=0.0.39",
+    "python-multipart>=0.0.32",
+    "pyjwt>=2.13.0",
+    "cryptography>=50.0.0",
+]
+
+[project.scripts]
+shulboard = "shulboard.service:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pyinstaller]
+onefile = true
