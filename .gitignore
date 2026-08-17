@@ -2,3 +2,4 @@
 uv.lock
 build
 dist
+**/__pycache__/**
