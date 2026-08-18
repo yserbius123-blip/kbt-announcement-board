@@ -23,16 +23,17 @@ async def lifespan(app: FastAPI):
         app.state.SECRET_KEY = secrets.token_hex(64)
     db_dir = Path.home() / "shulboard"
     db_file = db_dir / "shul.db"
-    db_uri = f"sqlite:///{str(db_file)}"
+    #db_uri = f"sqlite:///{str(db_file)}"
+    db_uri = "sqlite://"
     app.state.engine = create_engine(db_uri)
     if not db_dir.exists() or not db_file.exists():
         os.mkdir(db_dir)
-        SQLModel.metadata.create_all(app.state.engine)
+    SQLModel.metadata.create_all(app.state.engine)
 
-        admin = Admin(username="admin", password="shulpassword")
-        with Session(app.state.engine) as sesh:
-            sesh.add(admin)
-            sesh.commit()
+    admin = Admin(username="admin", password="shulpassword")
+    with Session(app.state.engine) as sesh:
+        sesh.add(admin)
+        sesh.commit()
 
     yield
     app.state.engine.dispose()

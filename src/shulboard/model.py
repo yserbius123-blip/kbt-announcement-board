@@ -1,12 +1,18 @@
-from sqlmodel import SQLModel, Field
+from typing import Optional
+
+from sqlmodel import Relationship, SQLModel, Field
 from datetime import datetime
 import hashlib
 from enum import Enum
 
-class ScheduleType(Enum):
-    SHABBOS = 1
-    WEEKDAY = 2
-    YOM_TOV = 3
+class ColumnType(str, Enum):
+    DAILY = 'daily'
+    ANNOUNCEMENTS = 'announcements'
+    SHABBOS_YT = 'shabbos_yt'
+
+class ItemType(str, Enum):
+    SCHEDULED = 'scheduled'
+    ANNOUNCEMENT = 'announcement'
 
 def hash_password(password:str) -> str:
     salt = 'admin'
@@ -23,13 +29,19 @@ class Admin(SQLModel, table = True):
         self.username = username
         self.password = hash_password(password) 
 
-class ScheduledThing(SQLModel, table = True):
+class Item(SQLModel, table = True):    
     id: int | None = Field(default = None, primary_key = True)
+    ordinal: int
+    item_type: ItemType
     title: str
-    time: datetime
-    type: ScheduleType = Field(default = ScheduleType.WEEKDAY)
-
-class AnnouncementThing(SQLModel, table = True):
-    id: int | None = Field(default = None, primary_key = True)
-    header: str | None = Field(default = None)
+    time: str
     text: str
+    page_id: int = Field(default=None, foreign_key="page.id")
+    page: Page = Relationship(back_populates="items")
+
+
+class Page(SQLModel, table = True):
+    id: int | None = Field(default = None, primary_key = True)
+    ordinal: int
+    type: ColumnType
+    items:  list[Item] = Relationship(back_populates="page") 

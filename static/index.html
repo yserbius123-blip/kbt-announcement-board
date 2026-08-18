@@ -13,18 +13,26 @@
 		<script>
 			function init(){
 				startTime();
-				let template_text = document.getElementById("template").innerHTML;
+				let sample_data = {
+					'weekday':[
+						{"ordinal": 1, "items": [,
+							{'title': 'Shacharis', 'time': "6:31am", "ordinal": 1},
+							{'title': 'Daf Yomi (Rov)', 'time': "7:30am", "ordinal": 2},
+							{'title': 'Mincha/Maariv', 'time': "7:45pm", "ordinal": 3},
+							{'title': 'Additional Maariv', 'time': "10:00pm", "ordinal": 4},
+							{'header': "Don't forget", 'text': "V'sein Bracha", "ordinal": 5},
+							]
+						}
+					]
+				}
+				let template_text = document.getElementById("schedule-template").innerHTML;
 				let template = Handlebars.compile(template_text);
-				document.getElementById("schedule-template").innerHTML = template({label: "Neila", value: "6:42"})
+				//document.getElementById("schedule-template").innerHTML = "";
+				document.getElementById("schedule-template").innerHTML = template(sample_data['weekday'][0]);
 			}
 		</script>
 	</head>
 	<body onload="init()">
-							<script id="template" type="text/x-handlebars-template">
-								<span class="label">{{label}}</span>
-								<span class="leader"></span>
-								<span class="value">{{value}}</span>
-							</script>
 		<div class="board">
 
 			<header class="north">
@@ -41,33 +49,28 @@
 				</div>
 			</header>
 
-			<main class="columns">
+			<main class="columns" id="columns">
 
 				<section class="column west">
 					<div class="column-header">Weekday Schedule</div>					
-					<div class="column-content schedule-list">
-						<div class="schedule-row" id="schedule-template">
-						</div>
+					<div class="column-content schedule-list" id="schedule-template">
+						{{#each items}}
+						{{#if time}}
 						<div class="schedule-row">
-							<span class="label">Shacharis</span>
+							<span class="label">{{title}}</span>
 							<span class="leader"></span>
-							<span class="value">6:30<small>AM</small></span>
+							<span class="value">{{time}}</span>
 						</div>
-						<div class="schedule-row">
-							<span class="label">Daf Yomi (Rov)</span>
-							<span class="leader"></span>
-							<span class="value">7:25<small>AM</small></span>
-						</div>
-						<div class="schedule-row">
-							<span class="label">Mincha / Maariv</span>
-							<span class="leader"></span>
-							<span class="value">7:50<small>PM</small></span>
-						</div>
-						<div class="schedule-row">
-							<span class="label">Additional Maariv</span>
-							<span class="leader"></span>
-							<span class="value">10:00<small>PM</small></span>
-						</div>
+						{{else}}
+							<article class="announcement">
+								{{#if header}}
+								<div class="eyebrow">{{header}}</div>
+								{{/if}}
+								<p>{{text}}</p>
+							</article>
+							<div class="ornament" aria-hidden="true"></div>
+						{{/if}}
+						{{/each}}
 					</div>
 				</section>
 
