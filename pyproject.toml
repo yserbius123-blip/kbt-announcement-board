@@ -17,7 +17,6 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]~=0.14",
     "uvicorn[standard]~=0.5",
-    "pywin32==312",
     "sqlmodel>=0.0.39",
     "python-multipart>=0.0.32",
     "pyjwt>=2.13.0",
