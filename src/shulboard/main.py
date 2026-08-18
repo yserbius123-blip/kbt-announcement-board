@@ -117,7 +117,7 @@ async def admin(is_admin: Annotated[str, Depends(is_admin)]):
 async def admin_html(request: Request):
     token = request.cookies.get("access_token")
     if token is None or not is_admin(token):
-        return RedirectResponse("/login.html") 
+        return RedirectResponse("/login.html?redirected_from=%2Fadmin.html") 
     else:
         return FileResponse("./static/admin.html")
 
