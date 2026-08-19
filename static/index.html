@@ -25,10 +25,7 @@
 						}
 					]
 				}
-				let template_text = document.getElementById("schedule-template").innerHTML;
-				let template = Handlebars.compile(template_text);
-				//document.getElementById("schedule-template").innerHTML = "";
-				document.getElementById("schedule-template").innerHTML = template(sample_data['weekday'][0]);
+				loadData();
 			}
 		</script>
 	</head>
@@ -53,7 +50,7 @@
 
 				<section class="column west">
 					<div class="column-header">Weekday Schedule</div>					
-					<div class="column-content schedule-list" id="schedule-template">
+					<div class="column-content schedule-list" id="weekday-schedule-template">
 						{{#each items}}
 						{{#if time}}
 						<div class="schedule-row">
@@ -63,8 +60,8 @@
 						</div>
 						{{else}}
 							<article class="announcement">
-								{{#if header}}
-								<div class="eyebrow">{{header}}</div>
+								{{#if title}}
+								<div class="eyebrow">{{title}}</div>
 								{{/if}}
 								<p>{{text}}</p>
 							</article>

@@ -34,14 +34,36 @@ class Item(SQLModel, table = True):
     ordinal: int
     item_type: ItemType
     title: str
-    time: str
-    text: str
+    time: str | None = Field(default = None)
+    text: str | None = Field(default = None)
     page_id: int = Field(default=None, foreign_key="page.id")
     page: Page = Relationship(back_populates="items")
+    def __str__(self):
+        return f"ID: {self.id}, Type: {self.item_type.value}, Title: {self.title}"    
+class ItemRead(SQLModel, table = False):    
+    id: int | None 
+    ordinal: int
+    item_type: ItemType
+    title: str
+    time: str | None
+    text: str | None
+    page_id: int 
+    def __str__(self):
+        return f"ID: {self.id}, Type: {self.item_type.value}, Title: {self.title}"
+
 
 
 class Page(SQLModel, table = True):
     id: int | None = Field(default = None, primary_key = True)
     ordinal: int
     type: ColumnType
-    items:  list[Item] = Relationship(back_populates="page") 
+    items:  list[Item] = Relationship(back_populates="page", sa_relationship_kwargs={"order_by": "Item.ordinal"}, cascade_delete=True) 
+    def __str__(self):
+        return f"ID: {self.id}, Type: {self.type.value}, Item count: {len(self.items)}"
+class PageRead(SQLModel, table = False):
+    id: Optional[int]
+    ordinal: int
+    type: ColumnType
+    items:  list[ItemRead]
+    def __str__(self):
+        return f"ID: {self.id}, Type: {self.type.value}, Item count: {len(self.items)}"

@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
+import json
 import secrets
 from typing import Annotated
 
@@ -9,14 +10,16 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 import jwt
 from sqlmodel import SQLModel, Session, create_engine, select
+from sqlalchemy.orm import selectinload
 from pathlib import Path
+import logging
 import os
 
 import uvicorn
 
-from shulboard.model import Admin, hash_password
+from shulboard.model import Admin, ColumnType, Item, ItemType, Page, PageRead, hash_password
 
-
+logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if "SECRET_KEY" not in dir(app.state):
@@ -31,8 +34,34 @@ async def lifespan(app: FastAPI):
     SQLModel.metadata.create_all(app.state.engine)
 
     admin = Admin(username="admin", password="shulpassword")
+    daily_items = [
+        Item(item_type=ItemType.ANNOUNCEMENT, ordinal = 4, title= "Don't forget", text="V'Sein Bracha"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 0, title= "Shacharis", time = "6:30am"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 1, title= "Daf (Rov)", time = "7:30am"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 2, title= "Mincha Maariv", time = "7:45pm"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 3, title= "Additional Maariv", time = "10:00pm"),
+    ]
+    ann_items = [
+        Item(item_type=ItemType.ANNOUNCEMENT, ordinal = 2, title= "Mazal Tov", text="To Yitzchak Avinu on the engagement of his son Yaakov"),
+        Item(item_type=ItemType.ANNOUNCEMENT, ordinal = 3, title= "Yartzeit", text="Someone, probably"),
+        Item(item_type=ItemType.ANNOUNCEMENT, ordinal = 4, title= "Kiddush Sponsor", text="Hopefully"),
+        Item(item_type=ItemType.ANNOUNCEMENT, ordinal = 5, title= "Thank you", text="For your patience"),
+    ]
+    shabbos_items = [
+        Item(item_type=ItemType.SCHEDULED, ordinal = 0, title= "Kabbolas Shabbos", time = "7:30pm"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 1, title= "Shacharis I", time = "7:00am"),
+        Item(item_type=ItemType.SCHEDULED, ordinal = 2, title= "Shacharis II", time = "8:45am"),
+    ]
+    page = Page(ordinal = 0, type = ColumnType.DAILY, items = daily_items )
+    ann_page = Page(ordinal = 0, type = ColumnType.ANNOUNCEMENTS, items = ann_items[0:2] )
+    ann_page2 = Page(ordinal = 2, type = ColumnType.ANNOUNCEMENTS, items = ann_items[2:4] )
+    shabbos_page = Page(ordinal = 0, type = ColumnType.SHABBOS_YT, items = shabbos_items )
     with Session(app.state.engine) as sesh:
         sesh.add(admin)
+        sesh.add(page)
+        sesh.add(ann_page)
+        sesh.add(ann_page2)
+        sesh.add(shabbos_page)
         sesh.commit()
 
     yield
@@ -68,10 +97,30 @@ app = FastAPI(lifespan=lifespan)
 app.frontend("/", directory="./static")
 
 
-@app.get("/api")
+@app.get("/api", response_model=str)
 async def api():
     return "Hi!"
 
+@app.get("/api/pages/update")
+async def update(
+    page: list[PageRead]
+):
+    pass
+@app.get("/api/pages", response_model=list[PageRead])
+async def pages(
+    column: ColumnType|None = None
+):
+    with Session(app.state.engine) as sesh:
+        base_statement = select(Page).options(selectinload(Page.items))
+        if column:
+            statement = base_statement.where(Page.type == column).order_by(Page.ordinal)
+        else:
+            statement = base_statement.order_by(Page.ordinal)
+        all_pages = sesh.exec(statement).all()
+        logger.error(all_pages)
+        return all_pages
+    raise HTTPException(500, "Error getting session pages")
+        
 
 @app.post("/api/token")
 async def token(
@@ -123,4 +172,4 @@ async def admin_html(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=os.getenv("PORT"))
+    uvicorn.run(app, host="0.0.0.0", port=os.getenv("PORT", 8000))
